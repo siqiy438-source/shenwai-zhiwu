@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#23201C">
 <meta name="format-detection" content="telephone=no">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2323201C'/%3E%3Ctext x='32' y='43' font-family='Georgia,serif' font-size='30' fill='%23D4B26A' text-anchor='middle'%3E%C2%A5%3C/text%3E%3C/svg%3E">
-<title>身外织物 · 薪资结构说明</title>
+<title>身外织物 · 工资单</title>
 <style>
   :root{
     --paper:#F7F4EF; --card:#FFFFFF; --dark:#23201C;
@@ -54,7 +54,7 @@
   .tip{font-size:13px;color:var(--ink2);background:var(--tint);border-radius:12px;padding:11px 14px;margin:10px 0 4px}
 
   label.f{display:block;font-size:13px;color:var(--ink3);margin:12px 0 6px}
-  input[type=text],input[type=number],input[type=date]{
+  input[type=text],input[type=number],input[type=date],input[type=month]{
     width:100%;font:inherit;font-size:16px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;
     background:#FDFCFA;color:var(--ink);outline:none;-webkit-appearance:none;appearance:none}
   input:focus{border-color:var(--goldl)}
@@ -81,67 +81,86 @@
   #out img{width:100%;border-radius:12px;box-shadow:0 4px 18px rgba(60,48,36,.14);display:block}
   #out p{text-align:center;font-size:13.5px;color:var(--ink2);margin:10px 0 0}
   footer{text-align:center;font-size:12px;color:var(--ink3);margin-top:28px}
+
+  .opts{display:flex;gap:8px}
+  .opts label{flex:1;text-align:center;border:1px solid var(--line);border-radius:12px;padding:10px 0;
+              font-size:15px;color:var(--ink2);background:#FDFCFA;cursor:pointer}
+  .opts input{display:none}
+  .opts label.on{border-color:var(--gold);background:var(--tint);color:var(--ink);font-weight:600}
+  .addrow{display:flex;gap:8px;margin-top:10px}
+  .addrow input{flex:1}
+  .addrow button{flex:none;border:0;border-radius:12px;background:var(--dark);color:var(--goldl);
+                 font:inherit;font-size:15px;padding:0 18px;cursor:pointer}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .chip{display:inline-flex;align-items:center;gap:6px;background:var(--tint);border-radius:999px;
+        padding:5px 8px 5px 12px;font-size:14px;color:var(--ink)}
+  .chip button{border:0;background:#E9DCC4;color:var(--ink2);width:20px;height:20px;border-radius:50%;
+               font-size:13px;line-height:20px;padding:0;cursor:pointer}
+  .count{font-size:13px;color:var(--ink3);margin-top:8px}
 </style>
 </head>
 <body>
 
 <section class="hero">
   <p class="brand">身外织物</p>
-  <div class="t">员工薪资结构说明</div>
-  <div class="note">请仔细看完下面的内容，确认没问题后在页面最底部签名，生成确认单发给老板。</div>
+  <div class="t">员工工资单 · 销售岗</div>
+  <div class="note">请仔细看完下面的内容，确认没问题后在页面最底部填写并签名，生成工资单发给老板。</div>
 </section>
-
-<div class="seg" role="tablist">
-  <button id="t-sale" class="on" onclick="setRole('sale')">销售岗</button>
-  <button id="t-ops" onclick="setRole('ops')">运营岗</button>
-</div>
 
 <h2>基本待遇</h2>
 <div class="card" id="basic"></div>
 
-<div id="saleOnly">
-  <h2>销售提成</h2>
-  <div class="card">
-    <table>
-      <thead><tr><th>当月个人业绩</th><th>提成比例</th></tr></thead>
-      <tbody id="tiers"></tbody>
-    </table>
-  </div>
-  <div class="tip">提成按「当月总业绩 × 所在档位比例」整体计算。比如当月业绩 10 万，落在 9 万–12 万这一档，提成就是 10 万 × 3% = 3,000 元。</div>
-
-  <h2>算一算我的工资</h2>
-  <div class="card calc">
-    <label class="f" for="perf">输入当月业绩（元）</label>
-    <input id="perf" type="number" inputmode="decimal" placeholder="例如 80000" oninput="calc()">
-    <div class="res" id="res"></div>
-  </div>
+<h2>销售提成</h2>
+<div class="card">
+  <table>
+    <thead><tr><th>当月个人业绩</th><th>提成比例</th></tr></thead>
+    <tbody id="tiers"></tbody>
+  </table>
 </div>
+<div class="tip">提成按「当月总业绩 × 所在档位比例」整体计算。比如当月业绩 10 万，落在 9 万–12 万这一档，提成就是 10 万 × 3% = 3,000 元。</div>
 
-<h2>员工确认签名</h2>
+<h2>填写本月工资单</h2>
 <div class="card sign">
   <label class="f" for="nm">员工姓名</label>
   <input id="nm" type="text" placeholder="请填写真实姓名" autocomplete="name">
-  <label class="f" for="dt">签署日期</label>
-  <input id="dt" type="date">
+  <label class="f" for="mon">工资月份</label>
+  <input id="mon" type="month">
+
+  <label class="f">本月休息情况</label>
+  <div class="opts" id="rest">
+    <label class="on"><input type="radio" name="rest" value="normal" checked>正常休</label>
+    <label><input type="radio" name="rest" value="more">多休</label>
+    <label><input type="radio" name="rest" value="less">少休</label>
+  </div>
+  <div id="restDates" style="display:none">
+    <div class="addrow">
+      <input id="rd" type="date">
+      <button onclick="addDate()">添加</button>
+    </div>
+    <div class="chips" id="chips"></div>
+    <div class="count" id="count"></div>
+  </div>
+
+  <label class="f" for="perf">当月业绩（元，选填）</label>
+  <input id="perf" type="number" inputmode="decimal" placeholder="例如 80000" oninput="calc()">
+  <div class="res" id="res"></div>
+
   <label class="f">手写签名（在框内用手指写）</label>
   <div class="padwrap"><canvas id="pad"></canvas><div class="padhint" id="hint">在此签名</div></div>
   <div class="padbar"><button class="ghost" onclick="clearPad()">清除重写</button></div>
-  <label class="agree"><input id="ok" type="checkbox"><span>我已阅读并认可以上 <b id="roleName">销售岗</b> 薪资结构。</span></label>
-  <button class="btn" onclick="make()">生成确认单</button>
+  <label class="f" for="dt">签署日期</label>
+  <input id="dt" type="date">
+  <label class="agree"><input id="ok" type="checkbox"><span>我已核对并确认以上工资内容。</span></label>
+  <button class="btn" onclick="make()">生成工资单</button>
   <div class="err" id="err"></div>
-  <div id="out"><img id="img" alt="薪资确认单"><p>长按图片保存到相册，再发给老板</p></div>
+  <div id="out"><img id="img" alt="工资单"><p>长按图片保存到相册，再发给老板</p></div>
 </div>
 
 <footer>身外织物 · 本页面不收集任何信息，签名只在你自己手机上生成图片</footer>
 
 <script>
-/* ========= 薪资规则：改数字只改这里 ========= */
-const RULES = {
-  sale: { name:"销售岗", base:5000, social:700, commission:true },
-  ops:  { name:"运营岗", base:7000, social:700, commission:false },
-};
-const ATTEND = "做六休一（每月休息 4 天）";
-const OVERTIME = "无加班费";
+/* ========= 工资规则：改数字只改这里 ========= */
+const RULE = { name:"销售岗", base:7000, social:700 };
 /* 当月业绩 < upTo 时用这一档；整体按档位比例计算 */
 const TIERS = [
   { upTo:50000,    label:"5 万以下",       rate:.01 },
@@ -150,47 +169,59 @@ const TIERS = [
   { upTo:140000,   label:"12 万 – 14 万",  rate:.04 },
   { upTo:Infinity, label:"14 万及以上",    rate:.05 },
 ];
+const REST = { normal:"正常休", more:"多休", less:"少休" };
 
-let role = "sale";
 const $ = id => document.getElementById(id);
 const money = v => "¥" + Math.round(v).toLocaleString("zh-CN");
 const pct = r => (r*100).toFixed(0) + "%";
 const tierOf = p => TIERS.find(t => p < t.upTo);
+const md = s => { const [,m,d]=s.split("-"); return (+m)+"月"+(+d)+"日"; };
 
-function setRole(r){
-  role = r;
-  $("t-sale").classList.toggle("on", r==="sale");
-  $("t-ops").classList.toggle("on", r==="ops");
-  $("saleOnly").style.display = RULES[r].commission ? "" : "none";
-  $("roleName").textContent = RULES[r].name;
-  $("out").style.display = "none";
-  renderBasic();
-}
-
-function renderBasic(){
-  const R = RULES[role];
-  $("basic").innerHTML = `
-    <div class="row"><span class="k">月底薪</span><span class="v serif" style="font-size:20px">${money(R.base)}</span></div>
-    <div class="row"><span class="k">出勤</span><span class="v">${ATTEND}</span></div>
-    <div class="row"><span class="k">社保</span><span class="v minus">每月扣 ${money(R.social)}</span></div>
-    <div class="row"><span class="k">提成</span><span class="v">${R.commission ? "按当月业绩阶梯计算<small>见下方提成表</small>" : "无"}</span></div>
-    <div class="row"><span class="k">加班</span><span class="v">${OVERTIME}</span></div>`;
-}
+$("basic").innerHTML = `
+  <div class="row"><span class="k">岗位</span><span class="v">${RULE.name}</span></div>
+  <div class="row"><span class="k">月底薪</span><span class="v serif" style="font-size:20px">${money(RULE.base)}</span></div>
+  <div class="row"><span class="k">出勤</span><span class="v">正常出勤</span></div>
+  <div class="row"><span class="k">社保</span><span class="v minus">每月扣 ${money(RULE.social)}</span></div>
+  <div class="row"><span class="k">提成</span><span class="v">按当月业绩阶梯计算<small>见下方提成表</small></span></div>`;
 
 function renderTiers(hit){
   $("tiers").innerHTML = TIERS.map(t =>
     `<tr class="${t===hit?"hit":""}"><td>${t.label}</td><td class="rate">${pct(t.rate)}</td></tr>`).join("");
 }
-
+function perfVal(){ const v=$("perf").value; return v==="" ? null : Math.max(0, +v||0); }
 function calc(){
-  const R = RULES.sale, p = Math.max(0, +$("perf").value || 0);
-  if(!$("perf").value){ $("res").innerHTML=""; renderTiers(null); return; }
-  const t = tierOf(p), com = p * t.rate, net = R.base + com - R.social;
+  const p = perfVal();
+  $("out").style.display="none";
+  if(p===null){ $("res").innerHTML=""; renderTiers(null); return; }
+  const t = tierOf(p), com = p*t.rate, net = RULE.base + com - RULE.social;
   renderTiers(t);
   $("res").innerHTML = `
     <div class="lab">预计到手</div>
     <div class="big serif">${money(net)}</div>
-    <div class="line">底薪 ${money(R.base)} ＋ 提成 ${money(com)}（${pct(t.rate)}）－ 社保 ${money(R.social)}</div>`;
+    <div class="line">底薪 ${money(RULE.base)} ＋ 提成 ${money(com)}（${pct(t.rate)}）－ 社保 ${money(RULE.social)}</div>`;
+}
+
+/* ========= 休息情况 ========= */
+let rest="normal", dates=[];
+document.querySelectorAll("#rest input").forEach(r => r.addEventListener("change", () => {
+  rest = r.value;
+  document.querySelectorAll("#rest label").forEach(l => l.classList.toggle("on", l.contains(r)));
+  $("restDates").style.display = rest==="normal" ? "none" : "";
+  renderDates();
+}));
+function addDate(){
+  const v=$("rd").value; if(!v || dates.includes(v)) return;
+  dates.push(v); dates.sort(); $("rd").value=""; renderDates();
+}
+function delDate(v){ dates=dates.filter(d=>d!==v); renderDates(); }
+function renderDates(){
+  $("out").style.display="none";
+  $("chips").innerHTML = dates.map(d=>`<span class="chip">${md(d)}<button onclick="delDate('${d}')" aria-label="删除">×</button></span>`).join("");
+  $("count").textContent = dates.length ? `${REST[rest]} ${dates.length} 天` : `选一个日期，点「添加」，可以加多天`;
+}
+function restText(){
+  if(rest==="normal") return ["正常出勤", ""];
+  return [`${REST[rest]} ${dates.length} 天`, dates.map(md).join("、")];
 }
 
 /* ========= 手写签名 ========= */
@@ -210,60 +241,74 @@ pad.addEventListener("pointerdown", e => { drawing=true; last=pos(e); pad.setPoi
 pad.addEventListener("pointermove", e => { if(!drawing) return; const p=pos(e);
   ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke(); last=p; });
 ["pointerup","pointercancel","pointerleave"].forEach(ev => pad.addEventListener(ev, ()=>drawing=false));
-function mark(){ inked=true; $("hint").style.display="none"; }
+function mark(){ inked=true; $("hint").style.display="none"; $("out").style.display="none"; }
 function clearPad(){ inked=false; ctx.clearRect(0,0,pad.width,pad.height); $("hint").style.display=""; $("out").style.display="none"; }
 
-/* ========= 生成确认单图片 ========= */
+/* ========= 生成工资单图片 ========= */
 function make(){
   const name = $("nm").value.trim();
   $("err").textContent = "";
   if(!name) return $("err").textContent = "请先填写姓名";
-  if(!$("dt").value) return $("err").textContent = "请选择签署日期";
+  if(!$("mon").value) return $("err").textContent = "请选择工资月份";
+  if(rest!=="normal" && !dates.length) return $("err").textContent = `选了「${REST[rest]}」，请添加具体日期`;
   if(!inked) return $("err").textContent = "请在框内手写签名";
-  if(!$("ok").checked) return $("err").textContent = "请勾选「我已阅读并认可」";
+  if(!$("dt").value) return $("err").textContent = "请选择签署日期";
+  if(!$("ok").checked) return $("err").textContent = "请勾选「我已核对并确认」";
 
-  const R = RULES[role];
+  const [ym, mm] = $("mon").value.split("-");
+  const p = perfVal(), t = p===null ? null : tierOf(p), com = t ? p*t.rate : 0;
+  const [rt, rd] = restText();
   const lines = [
-    ["岗位", R.name], ["月底薪", money(R.base)], ["出勤", ATTEND],
-    ["社保", "每月扣 " + money(R.social)],
-    ["提成", R.commission ? "按当月业绩阶梯，整体按档位比例计算" : "无"],
-    ["加班", OVERTIME],
+    ["姓名", name, ""], ["岗位", RULE.name, ""], ["月底薪", money(RULE.base), ""],
+    ["出勤", rt, rd], ["社保", "扣 " + money(RULE.social), ""],
   ];
-  const W=1080, PAD=96, tierH = R.commission ? 90 + TIERS.length*64 : 0;
+  if(t){ lines.push(["当月业绩", money(p), ""], ["提成", `${money(com)}（${pct(t.rate)}）`, ""]); }
+  else lines.push(["提成", "按当月业绩阶梯计算", ""]);
+
+  const W=1080, PAD=96;
   const sw=520, sh=sw*pad.height/pad.width;
-  const H = 400 + lines.length*76 + tierH + 340 + sh;
+  const linesH = lines.reduce((n,l)=>n+(l[2]?118:76),0);
+  const H = 400 + linesH + 90 + TIERS.length*64 + 60 + (t?150:0) + 300 + sh;
   const c=document.createElement("canvas"); c.width=W; c.height=H;
   const x=c.getContext("2d");
   const INK="#141210", INK2="#5F564D", INK3="#9C938A", AC="#A9873F", BD="#D8CDBB";
   const F=(w,s)=>`${w} ${s}px -apple-system,"PingFang SC","Hiragino Sans GB",sans-serif`;
   const SONG=(w,s)=>`${w} ${s}px "Songti SC","STSong",serif`;
+  const SERIF=s=>`400 ${s}px Didot,"Bodoni 72",Georgia,serif`;
 
   x.fillStyle="#FAF8F5"; x.fillRect(0,0,W,H);
   x.strokeStyle="#C9B183"; x.lineWidth=2.5; x.strokeRect(36,36,W-72,H-72);
   x.strokeStyle=BD; x.lineWidth=1; x.strokeRect(46,46,W-92,H-92);
 
   x.textAlign="center"; x.fillStyle=AC; x.font=SONG(600,40); x.fillText("身 外 织 物",W/2,160);
-  x.fillStyle=INK; x.font=SONG(600,54); x.fillText("薪资结构确认单",W/2,250);
-  x.strokeStyle=BD; x.beginPath(); x.moveTo(PAD,310); x.lineTo(W-PAD,310); x.stroke();
+  x.fillStyle=INK; x.font=SONG(600,60); x.fillText("工 资 单",W/2,250);
+  x.fillStyle=INK3; x.font=F(400,28); x.fillText(`${ym} 年 ${+mm} 月`,W/2,298);
+  x.strokeStyle=BD; x.beginPath(); x.moveTo(PAD,330); x.lineTo(W-PAD,330); x.stroke();
 
-  let y=380; x.textAlign="left";
-  for(const [k,v] of lines){
+  let y=400; x.textAlign="left";
+  for(const [k,v,sub] of lines){
     x.fillStyle=INK3; x.font=F(400,32); x.fillText(k,PAD,y);
-    x.fillStyle=INK;  x.font=F(600,34); x.textAlign="right"; x.fillText(v,W-PAD,y); x.textAlign="left";
-    y+=76;
+    x.fillStyle=INK;  x.font=F(600,34); x.textAlign="right"; x.fillText(v,W-PAD,y);
+    if(sub){ x.fillStyle=INK2; x.font=F(400,28); x.fillText(sub,W-PAD,y+44); }
+    x.textAlign="left"; y += sub?118:76;
   }
-  if(R.commission){
-    y+=10; x.fillStyle=INK3; x.font=F(400,30); x.fillText("提成档位（当月个人业绩）",PAD,y); y+=30;
-    for(const t of TIERS){
-      y+=64; x.fillStyle="#F2EEE7"; x.fillRect(PAD,y-44,W-PAD*2,58);
-      x.fillStyle=INK2; x.font=F(400,32); x.fillText(t.label,PAD+24,y);
-      x.fillStyle=AC; x.font=F(700,34); x.textAlign="right"; x.fillText(pct(t.rate),W-PAD-24,y); x.textAlign="left";
-    }
+  y+=10; x.fillStyle=INK3; x.font=F(400,30); x.fillText("提成档位（当月个人业绩）",PAD,y); y+=30;
+  for(const tr of TIERS){
+    y+=64; const hit = tr===t;
+    x.fillStyle= hit ? "#F3E6CB" : "#F2EEE7"; x.fillRect(PAD,y-44,W-PAD*2,58);
+    x.fillStyle=INK2; x.font=F(hit?600:400,32); x.fillText(tr.label,PAD+24,y);
+    x.fillStyle=AC; x.font=F(700,34); x.textAlign="right"; x.fillText(pct(tr.rate),W-PAD-24,y); x.textAlign="left";
+  }
+  y+=30;
+  if(t){
+    y+=40; x.strokeStyle=BD; x.beginPath(); x.moveTo(PAD,y); x.lineTo(W-PAD,y); x.stroke();
+    y+=80; x.fillStyle=INK2; x.font=F(400,32); x.fillText("实发工资",PAD,y);
+    x.fillStyle=AC; x.font=SERIF(64); x.textAlign="right"; x.fillText(money(RULE.base+com-RULE.social),W-PAD,y+6); x.textAlign="left";
     y+=30;
   }
   y+=40; x.strokeStyle=BD; x.beginPath(); x.moveTo(PAD,y); x.lineTo(W-PAD,y); x.stroke();
   y+=70; x.fillStyle=INK2; x.font=F(400,32);
-  x.fillText(`本人 ${name} 已阅读并认可以上${R.name}薪资结构。`,PAD,y);
+  x.fillText(`本人 ${name} 已核对并确认以上工资内容。`,PAD,y);
 
   y+=90; x.fillStyle=INK3; x.font=F(400,30); x.fillText("员工签名",PAD,y);
   x.drawImage(pad, W-PAD-sw, y-80, sw, sh);
@@ -280,7 +325,8 @@ function make(){
 (function(){
   const d=new Date(), p=n=>String(n).padStart(2,"0");
   $("dt").value = `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;
-  renderBasic(); renderTiers(null); sizePad();
+  $("mon").value = `${d.getFullYear()}-${p(d.getMonth()+1)}`;
+  renderTiers(null); renderDates(); sizePad();
   window.addEventListener("resize", sizePad);
 })();
 </script>
