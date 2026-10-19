@@ -44,7 +44,22 @@
   .month .cur span{font-size:11.5px;color:var(--ink3);letter-spacing:.3em;padding-left:.3em}
 
   /* ---------- 员工 ---------- */
-  .emp{padding:30px 0 30px;border-bottom:1px solid var(--hair)}
+  /* 员工：左右滑动，一屏一个人 */
+  .tabs{display:flex;gap:24px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--hair);padding-top:20px;margin:0 -24px;padding-left:24px;padding-right:24px}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:none;font-family:var(--song);font-size:15.5px;letter-spacing:.14em;color:var(--ink3);padding:0 0 12px;border-bottom:1px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:color .2s}
+  .tab.on{color:var(--ink);border-color:var(--ink)}
+  .tab.blank{font-style:italic;font-weight:400}
+  .tab.plus{font-family:var(--didot);color:var(--gold);font-size:18px;letter-spacing:0;padding-bottom:10px}
+  .tab.plus small{font-family:var(--sans);font-size:12px;letter-spacing:.2em;margin-left:6px;vertical-align:2px}
+  .slider{display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 -24px;align-items:flex-start;
+          transition:height .3s ease;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+  .slider::-webkit-scrollbar{display:none}
+  .emp{flex:0 0 100%;scroll-snap-align:start;scroll-snap-stop:always;padding:26px 24px 30px;border-bottom:1px solid var(--hair)}
+  .pager{display:flex;justify-content:center;align-items:center;gap:14px;padding:16px 0 0;font-size:11px;letter-spacing:.3em;color:var(--ink3)}
+  .pager .dots{display:flex;gap:7px}
+  .pager .dots i{width:5px;height:5px;border:1px solid var(--ink3);transform:rotate(45deg);transition:all .2s}
+  .pager .dots i.on{background:var(--gold);border-color:var(--gold)}
   .ehead{display:flex;align-items:baseline;justify-content:space-between}
   .ehead .no{font-family:var(--didot);font-style:italic;font-size:15px;color:var(--gold);letter-spacing:.06em}
   .ehead .del{font-size:12px;color:var(--ink3);letter-spacing:.2em}
@@ -102,9 +117,6 @@
   .out img{width:100%;display:block;box-shadow:0 18px 40px -18px rgba(60,44,24,.35)}
   .out p{text-align:center;font-size:11.5px;color:var(--ink3);letter-spacing:.24em;margin:12px 0 0}
 
-  .add{display:block;width:100%;padding:22px 0;border-bottom:1px solid var(--hair);font-size:13px;letter-spacing:.32em;color:var(--ink2);text-align:center}
-  .add span{font-family:var(--didot);font-size:18px;color:var(--gold);margin-right:10px;vertical-align:-1px}
-  .add:active{background:var(--wash)}
 
   /* ---------- 合计：和工资单图片同一个双线金框 ---------- */
   .total{margin-top:44px;background:var(--paper);border:1px solid var(--gold);outline:1px solid var(--hair);outline-offset:-7px;padding:34px 28px 30px}
@@ -144,7 +156,7 @@
   footer{text-align:center;font-size:10.5px;color:var(--ink3);letter-spacing:.3em;margin-top:40px;padding-left:.3em}
   footer .num{display:block;font-size:12px;letter-spacing:.4em;color:var(--gold);margin-bottom:6px}
 
-  @media (max-width:360px){ body{padding-left:18px;padding-right:18px} .mast h1{font-size:29px} .result .net{font-size:38px} .grand .v{font-size:38px} }
+  @media (max-width:360px){ body{padding-left:18px;padding-right:18px} .tabs,.slider{margin:0 -18px} .tabs{padding-left:18px;padding-right:18px} .emp{padding-left:18px;padding-right:18px} .mast h1{font-size:29px} .result .net{font-size:38px} .grand .v{font-size:38px} }
 </style>
 </head>
 <body>
@@ -162,8 +174,9 @@
   <button class="arrow" id="nextM" aria-label="下个月"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><path d="m6 2 6 6-6 6"/></svg></button>
 </div>
 
-<div id="list"></div>
-<button class="add" id="addEmp"><span>+</span>添加员工</button>
+<nav class="tabs" id="tabs"></nav>
+<div class="slider" id="list"></div>
+<div class="pager" id="pager"></div>
 
 <section class="total">
   <div class="cap">Monthly Total</div>
@@ -253,7 +266,7 @@ function restText(e){
 
 /* ========= 月份 ========= */
 function setMonth(m){
-  month = m;
+  month = m; cur = 0;
   const [y,mo] = m.split("-");
   $("monNum").textContent = `${y} · ${mo}`;
   $("monCn").textContent = `${CN_M[+mo-1]}月工资`;
@@ -278,10 +291,53 @@ function calHTML(e){
   }
   return h;
 }
+/* ========= 左右滑动 ========= */
+let cur = 0;
+const slides = () => [...$("list").querySelectorAll(".emp")];
+function renderTabs(){
+  $("tabs").innerHTML = list().map((e,i) => {
+    const n = e.name.trim();
+    return `<button class="tab${i===cur?" on":""}${n?"":" blank"}" data-i="${i}">${n ? esc(n) : "未填姓名"}</button>`;
+  }).join("") + `<button class="tab plus" id="addEmp">+<small>添加</small></button>`;
+  $("pager").innerHTML = list().length > 1
+    ? `<span>左右滑动</span><span class="dots">${list().map((_,i)=>`<i class="${i===cur?"on":""}"></i>`).join("")}</span><span class="num" style="letter-spacing:.1em">${pad2(cur+1)} / ${pad2(list().length)}</span>` : "";
+}
+function markCur(){
+  $("tabs").querySelectorAll(".tab[data-i]").forEach(t => t.classList.toggle("on", +t.dataset.i===cur));
+  $("pager").querySelectorAll(".dots i").forEach((d,i) => d.classList.toggle("on", i===cur));
+  const n = $("pager").querySelector(".num"); if(n) n.textContent = `${pad2(cur+1)} / ${pad2(list().length)}`;
+  const t = $("tabs").querySelector(".tab.on"); if(t) $("tabs").scrollTo({left: t.offsetLeft - 24, behavior:"smooth"});
+  fit();
+}
+function go(i, smooth=true){
+  cur = i; const s = slides()[i]; if(!s) { fit(); return; }
+  $("list").scrollTo({left: s.offsetLeft, behavior: smooth ? "smooth" : "auto"});
+  markCur();
+}
+/* 高度跟着当前这一位走，避免短的人下面空一大块 */
+function fit(){ const s = slides()[cur]; $("list").style.height = s ? s.offsetHeight + "px" : ""; }
+let scrollT;
+$("list").addEventListener("scroll", () => {
+  clearTimeout(scrollT);
+  scrollT = setTimeout(() => {
+    const w = $("list").clientWidth, i = Math.round($("list").scrollLeft / w);
+    if(i !== cur && slides()[i]){ cur = i; markCur(); }
+  }, 60);
+}, {passive:true});
+$("tabs").addEventListener("click", ev => {
+  const b = ev.target.closest(".tab"); if(!b) return;
+  if(b.id === "addEmp"){
+    list().push(newEmp("")); save(); cur = list().length-1; renderList();
+    slides()[cur].querySelector(".nm").focus({preventScroll:true});
+  } else go(+b.dataset.i);
+});
+const ro = window.ResizeObserver ? new ResizeObserver(() => fit()) : null;
+window.addEventListener("resize", () => go(cur, false));
+
 function renderList(){
   $("list").innerHTML = list().map((e,i) => `
     <article class="emp" data-id="${e.id}">
-      <div class="ehead"><span class="no">No. ${pad2(i+1)}</span><button class="del">移除</button></div>
+      <div class="ehead"><span class="no">No. ${pad2(i+1)} <span style="color:var(--ink3)">/ ${pad2(list().length)}</span></span><button class="del">移除</button></div>
       <input class="nm" type="text" placeholder="员工姓名" value="${esc(e.name)}" autocomplete="off">
       <label class="lbl">当月业绩</label>
       <div class="perfbox"><span>¥</span><input class="perf" type="text" inputmode="decimal" placeholder="0" value="${esc(fmtPerf(e.perf))}" autocomplete="off"></div>
@@ -298,6 +354,9 @@ function renderList(){
       <div class="out"><img alt="工资单"><p>长按图片保存或转发给员工</p></div>
     </article>`).join("");
   list().forEach(e => refreshCard(e));
+  cur = Math.min(cur, Math.max(0, list().length-1));
+  if(ro){ ro.disconnect(); slides().forEach(x => ro.observe(x)); }
+  renderTabs(); go(cur, false);
   renderSum();
 }
 const cardOf = e => $("list").querySelector(`[data-id="${e.id}"]`);
@@ -340,6 +399,11 @@ $("list").addEventListener("input", ev => {
   if(ev.target.classList.contains("nm"))   e.name = ev.target.value;
   if(ev.target.classList.contains("perf")){ const v = cleanPerf(ev.target.value); if(v!==ev.target.value) ev.target.value = v; e.perf = v; }
   save(); refreshCard(e); renderSum();
+  if(ev.target.classList.contains("nm")){
+    const t = $("tabs").querySelector(`.tab[data-i="${list().indexOf(e)}"]`);
+    if(t){ const n = e.name.trim(); t.textContent = n || "未填姓名"; t.classList.toggle("blank", !n); }
+  }
+  fit();
 });
 $("list").addEventListener("click", ev => {
   const c = ev.target.closest(".emp"); if(!c) return; const e = find(c.dataset.id);
@@ -350,25 +414,20 @@ $("list").addEventListener("click", ev => {
     c.querySelectorAll(".rest button").forEach(x => x.classList.toggle("on", x===b));
     c.querySelectorAll(".grid button.on").forEach(x => x.classList.remove("on"));
     c.querySelector(".cal").style.display = e.rest==="normal" ? "none" : "";
-    save(); refreshCard(e); renderSum();
+    save(); refreshCard(e); renderSum(); fit();
   } else if(b.dataset.day){
     const d = b.dataset.day, has = e.dates.includes(d);
     e.dates = has ? e.dates.filter(x=>x!==d) : [...e.dates, d].sort();
-    b.classList.toggle("on", !has); save(); refreshCard(e);
+    b.classList.toggle("on", !has); save(); refreshCard(e); fit();
   } else if(b.classList.contains("del")){
     if(!confirm(`移除 ${e.name.trim()||"这位员工"}？`)) return;
-    db.months[month] = list().filter(x => x!==e); save(); renderList();
+    db.months[month] = list().filter(x => x!==e); cur = Math.max(0, cur-1); save(); renderList();
   } else if(b.classList.contains("gen")){
-    make(e, c);
+    make(e, c); fit();
   }
 });
 $("list").addEventListener("focusin", ev => { if(ev.target.classList.contains("perf")){ const e = find(ev.target.closest(".emp").dataset.id); ev.target.value = e.perf; } });
 $("list").addEventListener("focusout", ev => { if(ev.target.classList.contains("perf")){ const e = find(ev.target.closest(".emp").dataset.id); ev.target.value = fmtPerf(e.perf); } });
-$("addEmp").onclick = () => {
-  list().push(newEmp("")); save(); renderList();
-  const cards = $("list").querySelectorAll(".emp"), last = cards[cards.length-1];
-  last.scrollIntoView({behavior:"smooth", block:"center"}); last.querySelector(".nm").focus({preventScroll:true});
-};
 $("sumBtn").onclick = makeSum;
 
 /* ========= 画图公用 ========= */
