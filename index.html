@@ -29,13 +29,6 @@
         box-shadow:0 5px 20px rgba(60,48,36,.10)}
   .hero .brand{font-family:"Songti SC","STSong",serif;font-size:30px;color:var(--goldl);letter-spacing:.18em;margin:0}
   .hero .t{font-size:14px;margin-top:6px;letter-spacing:.06em}
-  .hero .note{font-size:12.5px;color:#8E857A;margin-top:14px;border-top:1px solid #38322C;padding-top:12px}
-
-  .seg{display:flex;background:#EDE7DE;border-radius:12px;padding:4px;margin:18px 0 4px}
-  .seg button{flex:1;border:0;background:transparent;font:inherit;font-size:15px;color:var(--ink2);
-              padding:9px 0;border-radius:9px;cursor:pointer}
-  .seg button.on{background:var(--card);color:var(--ink);font-weight:600;box-shadow:0 1px 4px rgba(60,48,36,.10)}
-
   h2{font-size:13px;color:var(--ink3);font-weight:500;letter-spacing:.08em;margin:22px 4px 8px}
   .card{background:var(--card);border-radius:16px;padding:6px 18px;box-shadow:0 1px 3px rgba(60,48,36,.05)}
   .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:13px 0;border-top:1px solid var(--line)}
@@ -50,7 +43,6 @@
   th{font-size:12.5px;color:var(--ink3);font-weight:500;border-top:0}
   td:last-child,th:last-child{text-align:right}
   td.rate{font-weight:600;color:var(--gold);font-size:16px}
-  tr.hit td{background:var(--tint)}
   .tip{font-size:13px;color:var(--ink2);background:var(--tint);border-radius:12px;padding:11px 14px;margin:10px 0 4px}
 
   label.f{display:block;font-size:13px;color:var(--ink3);margin:12px 0 6px}
@@ -58,20 +50,7 @@
     width:100%;font:inherit;font-size:16px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;
     background:#FDFCFA;color:var(--ink);outline:none;-webkit-appearance:none;appearance:none}
   input:focus{border-color:var(--goldl)}
-  .calc{padding:16px 18px}
-  .res{margin-top:14px}
-  .res .big{font-size:40px;color:var(--gold);line-height:1.1;margin:2px 0 6px}
-  .res .lab{font-size:13px;color:var(--ink3)}
-  .res .line{font-size:13.5px;color:var(--ink2)}
-
   .sign{padding:16px 18px 18px}
-  .padwrap{position:relative;border:1px dashed #CDBFA9;border-radius:12px;background:#FDFCFA;height:170px;overflow:hidden}
-  #pad{width:100%;height:100%;display:block;touch-action:none;cursor:crosshair}
-  .padhint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#C7BCAE;font-size:15px;pointer-events:none;letter-spacing:.2em}
-  .padbar{display:flex;justify-content:flex-end;margin-top:6px}
-  .ghost{border:0;background:none;color:var(--ink3);font:inherit;font-size:13px;padding:4px 2px;cursor:pointer}
-  .agree{display:flex;gap:10px;align-items:flex-start;margin:14px 0 4px;font-size:14px;color:var(--ink2)}
-  .agree input{width:20px;height:20px;margin:1px 0 0;accent-color:var(--gold);flex:none}
   .btn{display:block;width:100%;border:0;border-radius:14px;background:var(--dark);color:var(--goldl);
        font:inherit;font-size:16px;font-weight:600;padding:15px;margin-top:14px;cursor:pointer;letter-spacing:.06em}
   .btn:active{opacity:.75}
@@ -136,7 +115,7 @@
   <label class="f" for="perf">当月业绩（元）</label>
   <input id="perf" type="number" inputmode="decimal" placeholder="例如 80000" oninput="upd()">
   <label class="f" for="mon">工资月份</label>
-  <input id="mon" type="month" oninput="upd()">
+  <input id="mon" type="month" oninput="limitDates();dates=dates.filter(d=>d.startsWith(this.value));renderDates()">
   <label class="f">本月休息情况</label>
   <div class="opts" id="rest">
     <label class="on"><input type="radio" name="rest" value="normal" checked>正常休</label>
@@ -145,7 +124,7 @@
   </div>
   <div id="restDates" style="display:none">
     <div class="addrow">
-      <input id="rd" type="date">
+      <input id="rd" type="date" onchange="addDate()">
       <button onclick="addDate()">添加</button>
     </div>
     <div class="chips" id="chips"></div>
@@ -190,9 +169,10 @@ const TIERS = [
 const REST = { normal:"正常休", more:"多休", less:"少休" };
 
 const $ = id => document.getElementById(id);
-const money = v => "¥" + Math.round(v).toLocaleString("zh-CN");
+const money = v => "¥" + (Math.round(v*100)/100).toLocaleString("zh-CN",{maximumFractionDigits:2});
 const pct = r => (r*100).toFixed(0) + "%";
 const tierOf = p => TIERS.find(t => p < t.upTo);
+const esc = s => s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const md = s => { const [,m,d]=s.split("-"); return (+m)+"月"+(+d)+"日"; };
 
 $("basic").innerHTML = `
@@ -218,14 +198,20 @@ document.querySelectorAll("#rest input").forEach(r => r.addEventListener("change
   $("restDates").style.display = rest==="normal" ? "none" : "";
   renderDates();
 }));
+function limitDates(){
+  const m=$("mon").value; if(!m) { $("rd").min=$("rd").max=""; return; }
+  const [y,mo]=m.split("-").map(Number), last=new Date(y,mo,0).getDate();
+  $("rd").min=`${m}-01`; $("rd").max=`${m}-${String(last).padStart(2,"0")}`;
+}
 function addDate(){
   const v=$("rd").value; if(!v || dates.includes(v)) return;
+  if(($("rd").min && v<$("rd").min) || ($("rd").max && v>$("rd").max)){ $("err").textContent="日期不在所选工资月份里"; $("rd").value=""; return; }
   dates.push(v); dates.sort(); $("rd").value=""; renderDates();
 }
 function delDate(v){ dates=dates.filter(d=>d!==v); renderDates(); }
 function renderDates(){
   $("chips").innerHTML = dates.map(d=>`<span class="chip">${md(d)}<button onclick="delDate('${d}')" aria-label="删除">×</button></span>`).join("");
-  $("count").textContent = dates.length ? `${REST[rest]} ${dates.length} 天` : `选一个日期，点「添加」，可以加多天`;
+  $("count").textContent = dates.length ? `${REST[rest]} ${dates.length} 天` : `选好日期会自动加进来，可以加多天`;
   upd();
 }
 function restText(){
@@ -237,10 +223,10 @@ function restText(){
 function upd(){
   $("out").style.display="none"; $("err").textContent="";
   const r = calcPay(), name = $("nm").value.trim(), [rt, rd] = restText();
-  if(!r){ $("pay").innerHTML = `<div class="lab">${name ? name+" · " : ""}本月实发工资</div>
+  if(!r){ $("pay").innerHTML = `<div class="lab">${name ? esc(name)+" · " : ""}本月实发工资</div>
     <div class="empty">填上当月业绩，这里直接显示要发多少工资</div>`; return; }
   $("pay").innerHTML = `
-    <div class="lab">${name ? name+" · " : ""}本月实发工资</div>
+    <div class="lab">${name ? esc(name)+" · " : ""}本月实发工资</div>
     <div class="big serif">${money(r.net)}</div>
     <div class="ln"><span>底薪</span><b>${money(RULE.base)}</b></div>
     <div class="ln"><span>提成（业绩 ${money(r.p)} × ${pct(r.t.rate)}）</span><b class="g">＋${money(r.com)}</b></div>
@@ -320,7 +306,7 @@ function make(){
 (function(){
   const d=new Date(), p=n=>String(n).padStart(2,"0");
   $("mon").value = `${d.getFullYear()}-${p(d.getMonth()+1)}`;
-  renderDates();
+  limitDates(); renderDates();
 })();
 </script>
 </body>
