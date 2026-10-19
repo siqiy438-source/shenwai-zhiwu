@@ -204,7 +204,7 @@
 
 <script>
 /* ========= 工资规则：改数字只改这里 ========= */
-const RULE = { name:"销售岗", base:7000, social:700 };
+const RULE = { name:"销售岗", base:5000, social:700 };
 /* 当月业绩 < upTo 时用这一档；整体按档位比例计算 */
 const TIERS = [
   { upTo:50000,    label:"5 万以下",       short:"5万以下", rate:.01 },
@@ -229,7 +229,7 @@ const fmtPerf = v => { if(v===""||v==null) return ""; const [a,b] = String(v).sp
 const pad2 = n => String(n).padStart(2,"0");
 
 $("basic").innerHTML = [
-  ["岗位", RULE.name, ""], ["月底薪", money(RULE.base), "num"], ["出勤", "正常出勤", ""],
+  ["岗位", RULE.name, ""], ["月底薪", money(RULE.base), "num"], ["出勤", "做六休一（每月休 4 天）", ""],
   ["社保", "每月扣 " + money(RULE.social), ""], ["提成", "按当月业绩阶梯计算", ""],
 ].map(([k,v,c]) => `<div class="kv"><span>${k}</span><b class="${c}">${v}</b></div>`).join("");
 $("tiers").innerHTML = TIERS.map(t => `<div class="kv"><span>${t.label}</span><b class="num">${pct(t.rate)}</b></div>`).join("");
@@ -260,7 +260,7 @@ function calcPay(e){
   return { p, t, com, net: RULE.base + com - RULE.social };
 }
 function restText(e){
-  if(e.rest==="normal") return ["正常出勤", ""];
+  if(e.rest==="normal") return ["做六休一（休 4 天）", ""];
   return [`${REST[e.rest]} ${e.dates.length} 天`, e.dates.map(md).join("、")];
 }
 
