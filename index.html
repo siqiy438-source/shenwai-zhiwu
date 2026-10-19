@@ -255,7 +255,6 @@ $("basic").innerHTML = [
   ...RULE.parts.map(([k,v]) => [k, money(v), "num", "sub"]),
   ["出勤", "做六休一（每月休 4 天）", ""],
   ["社保", "每月扣 " + money(RULE.social), ""], ["提成", "按当月业绩阶梯计算", ""],
-  ["加班费", `提成的 ${RULE.otShare*100}% 折算`, ""],
 ].map(([k,v,c,sub]) => `<div class="kv${sub?" sub":""}"><span>${k}</span><b class="${c}">${v}</b></div>`).join("");
 $("tiers").innerHTML = TIERS.map(t => `<div class="kv"><span>${t.label}</span><b class="num">${pct(t.rate)}</b></div>`).join("");
 
@@ -398,7 +397,7 @@ function refreshCard(e){
       <div class="ln"><span>月底薪</span><b class="num">${plain(RULE.base)}</b></div>
       ${RULE.parts.map(([k,v])=>`<div class="ln sub"><span>${k}</span><b class="num">${plain(v)}</b></div>`).join("")}
       <div class="ln"><span>提成</span><b class="num">＋${plain(r.comm)}</b></div>
-      <div class="ln"><span>加班费 <em>提成 ${RULE.otShare*100}% 折算</em></span><b class="num">＋${plain(r.ot)}</b></div>
+      <div class="ln"><span>加班费</span><b class="num">＋${plain(r.ot)}</b></div>
       <div class="ln"><span>社保</span><b class="num minus">－${plain(RULE.social)}</b></div>
     </div>
     <div class="scale">${TIERS.map(t=>`<div class="${t===r.t?"on":""}"><b>${pct(t.rate)}</b>${t.short}</div>`).join("")}</div>`
@@ -497,11 +496,11 @@ function make(e, card){
     ["月底薪", money(RULE.base), ""],
     ...RULE.parts.map(([k,v]) => [k, money(v), "", true]),
     ["提成", `＋${money(r.comm)}`, ""],
-    ["加班费", `＋${money(r.ot)}`, `按提成 ${RULE.otShare*100}% 折算`],
+    ["加班费", `＋${money(r.ot)}`, ""],
     ["社保", "－" + money(RULE.social), ""], ["出勤", rt, rd],
   ];
   const W=1080, PAD=96, linesH = lines.reduce((n,l)=>n+(l[3]?54:l[2]?118:76),0);
-  const [c,x] = sheet(W, 400 + linesH + 40 + TIERS.length*64 + 40 + 190 + 260, "工 资 单");
+  const [c,x] = sheet(W, 400 + linesH + 414, "工 资 单");
 
   let y=400;
   for(const [k,v,sub,ind] of lines){
@@ -516,14 +515,7 @@ function make(e, card){
     if(sub){ x.fillStyle=INK2; x.font=F(400,28); x.fillText(sub,W-PAD,y+44); }
     x.textAlign="left"; y += sub?118:76;
   }
-  y+=10; x.fillStyle=INK3; x.font=F(400,30); x.fillText("提成档位（当月个人业绩）",PAD,y); y+=30;
-  for(const tr of TIERS){
-    y+=64; const hit = tr===r.t;
-    x.fillStyle= hit ? "#F3E6CB" : "#F2EEE7"; x.fillRect(PAD,y-44,W-PAD*2,58);
-    x.fillStyle= hit ? INK : INK2; x.font=F(hit?600:400,32); x.fillText(tr.label + (hit?"　← 本月":""),PAD+24,y);
-    x.fillStyle=AC; x.font=F(700,34); x.textAlign="right"; x.fillText(pct(tr.rate),W-PAD-24,y); x.textAlign="left";
-  }
-  y+=60; hline(x,y,PAD,W-PAD);
+  y-=16; hline(x,y,PAD,W-PAD);
   y+=90; x.fillStyle=INK2; x.font=F(400,34); x.fillText("实发工资",PAD,y);
   x.fillStyle=AC; x.font=SERIF(72); x.textAlign="right"; x.fillText(money(r.net),W-PAD,y+8); x.textAlign="left";
   y+=60; hline(x,y,PAD,W-PAD);
