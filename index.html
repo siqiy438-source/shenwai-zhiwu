@@ -3,195 +3,223 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#23201C">
+<meta name="theme-color" content="#F5F1EA">
 <meta name="format-detection" content="telephone=no">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2323201C'/%3E%3Ctext x='32' y='43' font-family='Georgia,serif' font-size='30' fill='%23D4B26A' text-anchor='middle'%3E%C2%A5%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23F5F1EA'/%3E%3Crect x='5' y='5' width='54' height='54' fill='none' stroke='%23A88A57' stroke-width='2'/%3E%3Ctext x='32' y='43' font-family='Songti SC,serif' font-size='30' fill='%231A1714' text-anchor='middle'%3E%E7%BB%87%3C/text%3E%3C/svg%3E">
 <title>身外织物 · 工资单</title>
 <style>
   :root{
-    --paper:#F7F4EF; --card:#FFFFFF; --dark:#23201C;
-    --gold:#B8893C; --goldl:#D4B26A;
-    --ink:#14110E; --ink2:#5A5148; --ink3:#948B81;
-    --line:#E7E0D6; --tint:#FBF3E4; --red:#C0453A;
-    --safe-b:env(safe-area-inset-bottom,0px);
+    --bg:#F5F1EA; --paper:#FBF9F5; --ink:#1A1714; --ink2:#5C544B; --ink3:#9A9187;
+    --hair:#DDD4C7; --hair2:#EAE3D8; --gold:#A88A57; --goldd:#8C7043; --wash:#F0E8DA;
+    --red:#9E4A3C; --safe-b:env(safe-area-inset-bottom,0px);
+    --song:"Songti SC","STSong","Noto Serif SC","Source Han Serif SC",serif;
+    --didot:Didot,"Bodoni 72","Bodoni MT","Playfair Display",Georgia,serif;
+    --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html{background:var(--paper)}
-  body{
-    margin:0 auto;max-width:560px;background:var(--paper);color:var(--ink);
-    font:400 15px/1.6 -apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Hiragino Sans GB",sans-serif;
-    -webkit-font-smoothing:antialiased;
-    padding:18px 16px calc(32px + var(--safe-b));
-  }
-  .serif{font-family:"Bodoni 72",Didot,Georgia,"Times New Roman",serif;font-weight:400}
+  html{background:var(--bg)}
+  body{margin:0 auto;max-width:520px;background:var(--bg);color:var(--ink);
+       font:300 15px/1.65 var(--sans);-webkit-font-smoothing:antialiased;letter-spacing:.02em;
+       padding:0 24px calc(48px + var(--safe-b))}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+  input{font:inherit;color:inherit}
+  .num{font-family:var(--didot);font-weight:400;letter-spacing:0;font-variant-numeric:lining-nums}
 
-  .hero{background:var(--dark);border-radius:20px;padding:24px 24px 20px;color:#B6ACA0;
-        box-shadow:0 5px 20px rgba(60,48,36,.10)}
-  .hero .brand{font-family:"Songti SC","STSong",serif;font-size:30px;color:var(--goldl);letter-spacing:.18em;margin:0}
-  .hero .t{font-size:14px;margin-top:6px;letter-spacing:.06em}
-  h2{font-size:13px;color:var(--ink3);font-weight:500;letter-spacing:.08em;margin:22px 4px 8px}
-  .card{background:var(--card);border-radius:16px;padding:6px 18px;box-shadow:0 1px 3px rgba(60,48,36,.05)}
-  .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:13px 0;border-top:1px solid var(--line)}
-  .row:first-child{border-top:0}
-  .row .k{color:var(--ink2)}
-  .row .v{font-weight:600;text-align:right}
-  .row .v small{display:block;font-weight:400;font-size:12.5px;color:var(--ink3)}
-  .minus{color:var(--red)}
+  /* ---------- 刊头 ---------- */
+  .mast{text-align:center;padding:52px 0 30px}
+  .mast .en{font-family:var(--didot);font-size:11px;letter-spacing:.42em;color:var(--gold);text-transform:uppercase;padding-left:.42em}
+  .mast h1{font-family:var(--song);font-weight:600;font-size:34px;letter-spacing:.5em;padding-left:.5em;margin:14px 0 0;line-height:1.2}
+  .mast .rule{display:flex;align-items:center;gap:14px;margin:24px auto 0;width:180px;color:var(--gold)}
+  .mast .rule:before,.mast .rule:after{content:"";flex:1;height:1px;background:var(--gold);opacity:.55}
+  .mast .rule i{width:5px;height:5px;transform:rotate(45deg);border:1px solid var(--gold)}
+  .mast .sub{font-size:12.5px;color:var(--ink2);letter-spacing:.32em;padding-left:.32em;margin-top:18px}
 
-  table{width:100%;border-collapse:collapse;font-size:14.5px}
-  th,td{padding:11px 4px;text-align:left;border-top:1px solid var(--line)}
-  th{font-size:12.5px;color:var(--ink3);font-weight:500;border-top:0}
-  td:last-child,th:last-child{text-align:right}
-  td.rate{font-weight:600;color:var(--gold);font-size:16px}
-  .tip{font-size:13px;color:var(--ink2);background:var(--tint);border-radius:12px;padding:11px 14px;margin:10px 0 4px}
+  /* ---------- 月份 ---------- */
+  .month{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--ink);border-bottom:1px solid var(--hair);padding:16px 0}
+  .month .arrow{width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:var(--ink2)}
+  .month .arrow svg{width:16px;height:16px}
+  .month .arrow:active{opacity:.4}
+  .month .cur{text-align:center}
+  .month .cur b{display:block;font-size:30px;line-height:1;font-family:var(--didot);font-weight:400}
+  .month .cur span{font-size:11.5px;color:var(--ink3);letter-spacing:.3em;padding-left:.3em}
 
-  label.f{display:block;font-size:13px;color:var(--ink3);margin:12px 0 6px}
-  input[type=text],input[type=number],input[type=date],input[type=month]{
-    width:100%;font:inherit;font-size:16px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;
-    background:#FDFCFA;color:var(--ink);outline:none;-webkit-appearance:none;appearance:none}
-  input:focus{border-color:var(--goldl)}
-  .sign{padding:16px 18px 18px}
-  .btn{display:block;width:100%;border:0;border-radius:14px;background:var(--dark);color:var(--goldl);
-       font:inherit;font-size:16px;font-weight:600;padding:15px;margin-top:14px;cursor:pointer;letter-spacing:.06em}
-  .btn:active{opacity:.75}
-  .err{color:var(--red);font-size:13px;margin-top:8px;min-height:1em}
+  /* ---------- 员工 ---------- */
+  .emp{padding:30px 0 30px;border-bottom:1px solid var(--hair)}
+  .ehead{display:flex;align-items:baseline;justify-content:space-between}
+  .ehead .no{font-family:var(--didot);font-style:italic;font-size:15px;color:var(--gold);letter-spacing:.06em}
+  .ehead .del{font-size:12px;color:var(--ink3);letter-spacing:.2em}
+  .nm{display:block;width:100%;border:0;border-bottom:1px solid var(--hair);background:transparent;outline:none;
+      font-family:var(--song);font-size:24px;font-weight:600;letter-spacing:.18em;padding:8px 0 10px;margin-top:6px;border-radius:0}
+  .nm::placeholder{color:#C9C0B4;font-weight:400}
+  .nm:focus,.perfbox:focus-within{border-color:var(--ink)}
+  .lbl{display:block;font-size:11.5px;color:var(--ink3);letter-spacing:.28em;margin:22px 0 4px}
+  .perfbox{display:flex;align-items:baseline;gap:8px;border-bottom:1px solid var(--hair)}
+  .perfbox span{font-family:var(--didot);font-size:20px;color:var(--ink3)}
+  .perf{flex:1;min-width:0;border:0;background:transparent;outline:none;font-family:var(--didot);font-size:26px;padding:6px 0 8px;border-radius:0;-moz-appearance:textfield}
+  .perf::-webkit-outer-spin-button,.perf::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .perf::placeholder{color:#C9C0B4}
 
-  #out{display:none;margin-top:18px}
-  #out img{width:100%;border-radius:12px;box-shadow:0 4px 18px rgba(60,48,36,.14);display:block}
-  #out p{text-align:center;font-size:13.5px;color:var(--ink2);margin:10px 0 0}
-  footer{text-align:center;font-size:12px;color:var(--ink3);margin-top:28px}
+  .rest{display:flex;border:1px solid var(--hair);margin-top:8px}
+  .rest button{flex:1;padding:11px 0;font-size:14px;color:var(--ink2);letter-spacing:.24em;border-left:1px solid var(--hair);transition:background .2s,color .2s}
+  .rest button:first-child{border-left:0}
+  .rest button.on{background:var(--ink);color:var(--paper);font-weight:400}
 
-  .opts{display:flex;gap:8px}
-  .opts button{flex:1;text-align:center;border:1px solid var(--line);border-radius:12px;padding:10px 0;
-              font-size:15px;color:var(--ink2);background:#FDFCFA;cursor:pointer}
-    .opts button.on{border-color:var(--gold);background:var(--tint);color:var(--ink);font-weight:600}
-  .addrow{display:flex;gap:8px;margin-top:10px}
-  .addrow input{flex:1}
-  .addrow button{flex:none;border:0;border-radius:12px;background:var(--dark);color:var(--goldl);
-                 font:inherit;font-size:15px;padding:0 18px;cursor:pointer}
-  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-  .chip{display:inline-flex;align-items:center;gap:6px;background:var(--tint);border-radius:999px;
-        padding:5px 8px 5px 12px;font-size:14px;color:var(--ink)}
-  .chip button{border:0;background:#E9DCC4;color:var(--ink2);width:20px;height:20px;border-radius:50%;
-               font-size:13px;line-height:20px;padding:0;cursor:pointer}
-  .count{font-size:13px;color:var(--ink3);margin-top:8px}
+  /* 当月日历：点日期就选中 */
+  .cal{margin-top:14px;background:var(--paper);border:1px solid var(--hair2);padding:14px 12px 12px}
+  .cal .hd{display:flex;justify-content:space-between;font-size:12px;color:var(--ink3);letter-spacing:.2em;padding:0 4px 10px}
+  .cal .hd b{color:var(--ink);font-weight:400}
+  .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+  .grid .wd{font-size:11px;color:var(--ink3);padding-bottom:4px}
+  .grid button{aspect-ratio:1;font-family:var(--didot);font-size:16px;color:var(--ink);display:flex;align-items:center;justify-content:center;border:1px solid transparent}
+  .grid button:active{background:var(--wash)}
+  .grid button.on{background:var(--gold);color:#fff}
+  .grid .we{color:var(--ink3)}
+  .cal .ft{font-size:12.5px;color:var(--ink2);padding:10px 4px 0;border-top:1px solid var(--hair2);margin-top:10px;min-height:1.6em}
 
-  .pay{background:var(--dark);border-radius:20px;padding:20px 22px;color:#B6ACA0;margin-top:14px}
-  .pay .lab{font-size:13px}
-  .pay .big{font-size:46px;color:var(--goldl);line-height:1.1;margin:4px 0 12px;word-break:break-all}
-  .pay .ln{display:flex;justify-content:space-between;font-size:14px;padding:7px 0;border-top:1px solid #38322C}
-  .pay .ln b{color:#EDE6DB;font-weight:500}
-  .pay .ln b.m{color:#E39B91}
-  .pay .ln b.g{color:var(--goldl);font-weight:600}
-  .pay .empty{font-size:14px;padding:4px 0 2px}
-  .pay table{margin-top:10px;font-size:13.5px}
-  .pay td{border-top:1px solid #38322C;padding:8px 6px;color:#B6ACA0}
-  .pay td.rate{color:var(--goldl);font-size:14px}
-  .pay tr.hit td{background:#3A3127;color:#F1E3C4;font-weight:600}
-  .pay tr.hit td:first-child{border-radius:6px 0 0 6px}
-  .pay tr.hit td:last-child{border-radius:0 6px 6px 0}
-  .pay .tl{font-size:12.5px;color:#8E857A;margin-top:14px}
-  details{background:var(--card);border-radius:16px;margin-top:12px;box-shadow:0 1px 3px rgba(60,48,36,.05)}
-  summary{list-style:none;cursor:pointer;padding:15px 18px;font-size:15px;color:var(--ink2);display:flex;justify-content:space-between}
+  /* 结果 */
+  .result{margin-top:26px}
+  .result .row{display:flex;align-items:baseline;justify-content:space-between}
+  .result .k{font-size:11.5px;color:var(--ink3);letter-spacing:.28em}
+  .result .net{font-family:var(--didot);font-size:44px;line-height:1;color:var(--ink)}
+  .result .net small{font-size:.5em;color:var(--ink3);margin-right:4px;vertical-align:.35em}
+  .result .bd{font-size:12.5px;color:var(--ink2);margin-top:10px;text-align:right;letter-spacing:.04em}
+  .result .bd .num{font-size:14px}
+  .result .wait{font-size:13px;color:var(--ink3);text-align:right;font-style:italic;font-family:var(--song)}
+  .scale{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:20px}
+  .scale div{text-align:center;font-size:10.5px;color:var(--ink3);letter-spacing:.02em}
+  .scale div:before{content:"";display:block;height:2px;background:var(--hair);margin-bottom:7px}
+  .scale div b{display:block;font-family:var(--didot);font-weight:400;font-size:14px;color:var(--ink3)}
+  .scale div.on:before{background:var(--gold);height:3px;margin-top:-1px}
+  .scale div.on,.scale div.on b{color:var(--goldd)}
+
+  .act{display:flex;justify-content:flex-end;margin-top:22px}
+  .link{font-size:13px;letter-spacing:.24em;color:var(--ink);padding:6px 0;border-bottom:1px solid var(--ink);display:inline-flex;align-items:center;gap:10px}
+  .link:after{content:"";width:18px;height:1px;background:currentColor;position:relative;top:0}
+  .link:active{opacity:.5}
+  .err{color:var(--red);font-size:12.5px;text-align:right;margin-top:8px;min-height:0}
+  .err:empty{display:none}
+  .out{display:none;margin-top:20px}
+  .out img{width:100%;display:block;box-shadow:0 18px 40px -18px rgba(60,44,24,.35)}
+  .out p{text-align:center;font-size:11.5px;color:var(--ink3);letter-spacing:.24em;margin:12px 0 0}
+
+  .add{display:block;width:100%;padding:22px 0;border-bottom:1px solid var(--hair);font-size:13px;letter-spacing:.32em;color:var(--ink2);text-align:center}
+  .add span{font-family:var(--didot);font-size:18px;color:var(--gold);margin-right:10px;vertical-align:-1px}
+  .add:active{background:var(--wash)}
+
+  /* ---------- 合计：和工资单图片同一个双线金框 ---------- */
+  .total{margin-top:44px;background:var(--paper);border:1px solid var(--gold);outline:1px solid var(--hair);outline-offset:-7px;padding:34px 28px 30px}
+  .total .cap{text-align:center;font-size:10.5px;letter-spacing:.42em;text-transform:uppercase;color:var(--gold);font-family:var(--didot);padding-left:.42em}
+  .total h2{text-align:center;font-family:var(--song);font-weight:600;font-size:19px;letter-spacing:.4em;padding-left:.4em;margin:8px 0 22px}
+  .ledger .li{display:flex;align-items:baseline;gap:10px;padding:11px 0;border-top:1px solid var(--hair2)}
+  .ledger .li:first-child{border-top:1px solid var(--hair)}
+  .ledger .who{font-family:var(--song);font-size:16px;letter-spacing:.12em}
+  .ledger .who small{display:block;font-family:var(--sans);font-size:11px;color:var(--ink3);letter-spacing:.04em}
+  .ledger .dots{flex:1;border-bottom:1px dotted #CFC5B7;transform:translateY(-5px)}
+  .ledger .amt{font-family:var(--didot);font-size:19px}
+  .grand{border-top:1px solid var(--ink);margin-top:6px;padding-top:4px}
+  .grand:before{content:"";display:block;border-top:1px solid var(--ink);margin-bottom:18px}
+  .grand .row{display:flex;justify-content:space-between;align-items:baseline}
+  .grand .k{font-size:12px;letter-spacing:.3em;color:var(--ink2)}
+  .grand .v{font-family:var(--didot);font-size:46px;line-height:1;color:var(--goldd)}
+  .grand .meta{font-size:12px;color:var(--ink3);text-align:right;margin-top:10px;letter-spacing:.06em}
+  .grand .warn{font-size:12px;color:var(--red);text-align:right;margin-top:4px}
+  .total .empty{text-align:center;font-family:var(--song);font-style:italic;color:var(--ink3);font-size:14px;padding:18px 0 4px;border-top:1px solid var(--hair)}
+  .total .act{justify-content:center;margin-top:26px}
+  .total .err{text-align:center}
+
+  /* ---------- 说明 ---------- */
+  .notes{margin-top:44px;border-top:1px solid var(--ink)}
+  details{border-bottom:1px solid var(--hair)}
+  summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:18px 0;font-family:var(--song);font-size:15.5px;letter-spacing:.24em}
   summary::-webkit-details-marker{display:none}
-  summary::after{content:"展开";font-size:13px;color:var(--ink3)}
-  details[open] summary::after{content:"收起"}
-  details .in{padding:0 18px 14px}
-  details .in .row:first-child{border-top:1px solid var(--line)}
-  details .tip{margin:12px 0 0}
+  summary:after{content:"";width:9px;height:9px;border-right:1px solid var(--ink2);border-bottom:1px solid var(--ink2);transform:rotate(45deg) translate(-2px,-2px);transition:transform .25s}
+  details[open] summary:after{transform:rotate(-135deg) translate(-2px,-2px)}
+  .in{padding:0 0 18px}
+  .kv{display:flex;justify-content:space-between;padding:9px 0;font-size:13.5px;border-top:1px solid var(--hair2)}
+  .kv:first-child{border-top:0}
+  .kv span{color:var(--ink3);letter-spacing:.16em}
+  .kv b{font-weight:400}
+  .kv b.num{font-size:16px}
+  .in p{font-size:12.5px;color:var(--ink2);line-height:1.8;margin:12px 0 0;padding:12px 14px;background:var(--paper);border-left:2px solid var(--gold)}
+  footer{text-align:center;font-size:10.5px;color:var(--ink3);letter-spacing:.3em;margin-top:40px;padding-left:.3em}
+  footer .num{display:block;font-size:12px;letter-spacing:.4em;color:var(--gold);margin-bottom:6px}
 
-  .opts button{font:inherit;font-size:15px}
-  .monbar{display:flex;align-items:center;gap:12px;margin-top:14px;padding:12px 18px}
-  .monbar span{flex:none;color:var(--ink2);font-size:14px}
-  .emp{padding:14px 18px 16px;margin-top:12px}
-  .ehead{display:flex;gap:10px;align-items:center}
-  .ehead .no{flex:none;width:26px;height:26px;border-radius:50%;background:var(--dark);color:var(--goldl);
-             font-size:13px;display:flex;align-items:center;justify-content:center}
-  .ehead input{flex:1}
-  .del{flex:none;border:0;background:none;color:var(--ink3);font:inherit;font-size:13px;padding:6px 2px;cursor:pointer}
-  .epay{background:var(--tint);border-radius:12px;padding:12px 14px;margin-top:14px}
-  .epay .lab{font-size:12.5px;color:var(--ink3)}
-  .epay .big{font-size:32px;color:var(--gold);line-height:1.15;margin:2px 0 4px}
-  .epay .line{font-size:13px;color:var(--ink2)}
-  .epay .badge{display:inline-block;margin-top:8px;font-size:12.5px;background:#F1E3C4;color:#7A5A22;border-radius:999px;padding:3px 10px}
-  .epay .empty{font-size:13.5px;color:var(--ink3)}
-  .btn.sm{font-size:15px;padding:12px;margin-top:12px}
-  .out{display:none;margin-top:14px}
-  .out img{width:100%;border-radius:12px;box-shadow:0 4px 18px rgba(60,48,36,.14);display:block}
-  .out p{text-align:center;font-size:13px;color:var(--ink2);margin:8px 0 0}
-  .addemp{display:block;width:100%;margin-top:12px;border:1.5px dashed #CDBFA9;border-radius:16px;background:transparent;
-          color:var(--gold);font:inherit;font-size:15px;font-weight:600;padding:14px;cursor:pointer}
-  .pay .stab td{font-size:14px}
-  .pay .stab td small{display:block;font-size:11.5px;color:#8E857A;font-weight:400}
-  .pay .stab tr.tot td{border-top:1px solid #6B5E4D;color:var(--goldl);font-weight:600}
-  .pay .warn{font-size:12.5px;color:#E3B98F;margin-top:10px}
+  @media (max-width:360px){ body{padding-left:18px;padding-right:18px} .mast h1{font-size:29px} .result .net{font-size:38px} .grand .v{font-size:38px} }
 </style>
 </head>
 <body>
 
-<section class="hero" style="padding-bottom:18px">
-  <p class="brand">身外织物</p>
-  <div class="t">员工工资单 · 销售岗</div>
-</section>
+<header class="mast">
+  <div class="en">Shenwai · Zhiwu</div>
+  <h1>身外织物</h1>
+  <div class="rule"><i></i></div>
+  <div class="sub">员工工资单 · 销售岗</div>
+</header>
 
-<div class="card monbar">
-  <span>工资月份</span>
-  <input id="mon" type="month">
+<div class="month">
+  <button class="arrow" id="prevM" aria-label="上个月"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M10 2 4 8l6 6"/></svg></button>
+  <div class="cur"><b id="monNum"></b><span id="monCn"></span></div>
+  <button class="arrow" id="nextM" aria-label="下个月"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><path d="m6 2 6 6-6 6"/></svg></button>
 </div>
 
 <div id="list"></div>
-<button class="addemp" id="addEmp">＋ 添加员工</button>
+<button class="add" id="addEmp"><span>+</span>添加员工</button>
 
-<h2>本月合计</h2>
-<div class="pay" id="sum" style="margin-top:0"></div>
-<button class="btn" id="sumBtn">生成全店汇总图片</button>
-<div class="err" id="sumErr"></div>
-<div class="out" id="sumOut"><img alt="工资汇总"><p>长按图片保存或转发</p></div>
+<section class="total">
+  <div class="cap">Monthly Total</div>
+  <h2>本月合计</h2>
+  <div id="sum"></div>
+  <div class="act"><button class="link" id="sumBtn">生成汇总图片</button></div>
+  <div class="err" id="sumErr"></div>
+  <div class="out" id="sumOut"><img alt="工资汇总"><p>长按图片保存或转发</p></div>
+</section>
 
-<details>
-  <summary>基本待遇</summary>
-  <div class="in" id="basic"></div>
-</details>
-<details>
-  <summary>提成规则</summary>
-  <div class="in">
-    <table>
-      <thead><tr><th>当月个人业绩</th><th>提成比例</th></tr></thead>
-      <tbody id="tiers"></tbody>
-    </table>
-    <div class="tip">提成按「当月总业绩 × 所在档位比例」整体计算。比如当月业绩 10 万，落在 9 万–12 万这一档，提成就是 10 万 × 3% = 3,000 元。</div>
-  </div>
-</details>
+<div class="notes">
+  <details>
+    <summary>基本待遇</summary>
+    <div class="in" id="basic"></div>
+  </details>
+  <details>
+    <summary>提成规则</summary>
+    <div class="in"><div id="tiers"></div>
+      <p>提成按「当月总业绩 × 所在档位比例」整体计算。比如当月业绩 10 万，落在 9 万–12 万这一档，提成就是 10 万 × 3% = 3,000 元。</p>
+    </div>
+  </details>
+</div>
 
-<footer>身外织物 · 数据只存在这台手机里，不上传</footer>
+<footer><span class="num">S · Z</span>数据只保存在这台手机</footer>
 
 <script>
 /* ========= 工资规则：改数字只改这里 ========= */
 const RULE = { name:"销售岗", base:7000, social:700 };
 /* 当月业绩 < upTo 时用这一档；整体按档位比例计算 */
 const TIERS = [
-  { upTo:50000,    label:"5 万以下",       rate:.01 },
-  { upTo:90000,    label:"5 万 – 9 万",    rate:.02 },
-  { upTo:120000,   label:"9 万 – 12 万",   rate:.03 },
-  { upTo:140000,   label:"12 万 – 14 万",  rate:.04 },
-  { upTo:Infinity, label:"14 万及以上",    rate:.05 },
+  { upTo:50000,    label:"5 万以下",       short:"5万以下", rate:.01 },
+  { upTo:90000,    label:"5 万 – 9 万",    short:"5–9万",   rate:.02 },
+  { upTo:120000,   label:"9 万 – 12 万",   short:"9–12万",  rate:.03 },
+  { upTo:140000,   label:"12 万 – 14 万",  short:"12–14万", rate:.04 },
+  { upTo:Infinity, label:"14 万及以上",    short:"14万+",   rate:.05 },
 ];
 const REST = { normal:"正常休", more:"多休", less:"少休" };
+const CN_M = ["一","二","三","四","五","六","七","八","九","十","十一","十二"];
 
 const $ = id => document.getElementById(id);
 const money = v => "¥" + (Math.round(v*100)/100).toLocaleString("zh-CN",{maximumFractionDigits:2});
+const plain = v => (Math.round(v*100)/100).toLocaleString("zh-CN",{maximumFractionDigits:2});
 const pct = r => (r*100).toFixed(0) + "%";
 const tierOf = p => TIERS.find(t => p < t.upTo);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const md = s => { const [,m,d]=s.split("-"); return (+m)+"月"+(+d)+"日"; };
+/* 业绩输入：编辑时是纯数字，离开输入框显示千分位 */
+const cleanPerf = v => { let t = String(v).replace(/[^\d.]/g,""); const i = t.indexOf("."); if(i>=0) t = t.slice(0,i+1) + t.slice(i+1).replace(/\./g,""); return t; };
+const fmtPerf = v => { if(v===""||v==null) return ""; const [a,b] = String(v).split("."); return (+a).toLocaleString("en-US") + (b!==undefined ? "."+b : ""); };
+const pad2 = n => String(n).padStart(2,"0");
 
-$("basic").innerHTML = `
-  <div class="row"><span class="k">岗位</span><span class="v">${RULE.name}</span></div>
-  <div class="row"><span class="k">月底薪</span><span class="v">${money(RULE.base)}</span></div>
-  <div class="row"><span class="k">出勤</span><span class="v">正常出勤</span></div>
-  <div class="row"><span class="k">社保</span><span class="v minus">每月扣 ${money(RULE.social)}</span></div>
-  <div class="row"><span class="k">提成</span><span class="v">按当月业绩阶梯计算</span></div>`;
-$("tiers").innerHTML = TIERS.map(t => `<tr><td>${t.label}</td><td class="rate">${pct(t.rate)}</td></tr>`).join("");
+$("basic").innerHTML = [
+  ["岗位", RULE.name, ""], ["月底薪", money(RULE.base), "num"], ["出勤", "正常出勤", ""],
+  ["社保", "每月扣 " + money(RULE.social), ""], ["提成", "按当月业绩阶梯计算", ""],
+].map(([k,v,c]) => `<div class="kv"><span>${k}</span><b class="${c}">${v}</b></div>`).join("");
+$("tiers").innerHTML = TIERS.map(t => `<div class="kv"><span>${t.label}</span><b class="num">${pct(t.rate)}</b></div>`).join("");
 
 /* ========= 数据：按月份存在这台手机里 ========= */
 const KEY = "shenwai-payroll-v1";
@@ -222,50 +250,68 @@ function restText(e){
   if(e.rest==="normal") return ["正常出勤", ""];
   return [`${REST[e.rest]} ${e.dates.length} 天`, e.dates.map(md).join("、")];
 }
-function monthRange(){
-  const [y,mo]=month.split("-").map(Number), last=new Date(y,mo,0).getDate();
-  return [`${month}-01`, `${month}-${String(last).padStart(2,"0")}`];
-}
 
-/* ========= 员工卡片 ========= */
+/* ========= 月份 ========= */
+function setMonth(m){
+  month = m;
+  const [y,mo] = m.split("-");
+  $("monNum").textContent = `${y} · ${mo}`;
+  $("monCn").textContent = `${CN_M[+mo-1]}月工资`;
+  renderList();
+}
+function shift(n){
+  const [y,mo] = month.split("-").map(Number), d = new Date(y, mo-1+n, 1);
+  setMonth(`${d.getFullYear()}-${pad2(d.getMonth()+1)}`);
+}
+$("prevM").onclick = () => shift(-1);
+$("nextM").onclick = () => shift(1);
+
+/* ========= 员工 ========= */
+function calHTML(e){
+  const [y,mo] = month.split("-").map(Number), days = new Date(y,mo,0).getDate();
+  const lead = (new Date(y,mo-1,1).getDay()+6)%7;           // 周一开头
+  let h = "一二三四五六日".split("").map(w=>`<span class="wd">${w}</span>`).join("");
+  h += "<span></span>".repeat(lead);
+  for(let d=1; d<=days; d++){
+    const iso = `${month}-${pad2(d)}`, wk = (lead+d-1)%7>=5;
+    h += `<button data-day="${iso}" class="${e.dates.includes(iso)?"on":""}${wk?" we":""}">${d}</button>`;
+  }
+  return h;
+}
 function renderList(){
-  const [mn,mx] = monthRange();
   $("list").innerHTML = list().map((e,i) => `
-    <div class="card emp" data-id="${e.id}">
-      <div class="ehead">
-        <span class="no">${i+1}</span>
-        <input class="nm" type="text" placeholder="员工姓名" value="${esc(e.name)}">
-        <button class="del">删除</button>
+    <article class="emp" data-id="${e.id}">
+      <div class="ehead"><span class="no">No. ${pad2(i+1)}</span><button class="del">移除</button></div>
+      <input class="nm" type="text" placeholder="员工姓名" value="${esc(e.name)}" autocomplete="off">
+      <label class="lbl">当月业绩</label>
+      <div class="perfbox"><span>¥</span><input class="perf" type="text" inputmode="decimal" placeholder="0" value="${esc(fmtPerf(e.perf))}" autocomplete="off"></div>
+      <label class="lbl">本月休息</label>
+      <div class="rest">${Object.keys(REST).map(k=>`<button data-rest="${k}" class="${e.rest===k?"on":""}">${REST[k]}</button>`).join("")}</div>
+      <div class="cal" style="display:${e.rest==="normal"?"none":""}">
+        <div class="hd"><span>点选${REST[e.rest]||""}的日期</span><b>${+month.split("-")[1]} 月</b></div>
+        <div class="grid">${calHTML(e)}</div>
+        <div class="ft"></div>
       </div>
-      <label class="f">当月业绩（元）</label>
-      <input class="perf" type="number" inputmode="decimal" placeholder="例如 80000" value="${esc(e.perf)}">
-      <label class="f">本月休息情况</label>
-      <div class="opts">${Object.keys(REST).map(k=>`<button data-rest="${k}" class="${e.rest===k?"on":""}">${REST[k]}</button>`).join("")}</div>
-      <div class="rdwrap" style="display:${e.rest==="normal"?"none":""}">
-        <div class="addrow"><input class="rd" type="date" min="${mn}" max="${mx}"></div>
-        <div class="chips"></div><div class="count"></div>
-      </div>
-      <div class="epay"></div>
-      <button class="btn sm gen">生成 ${esc(e.name)||"TA"} 的工资单图片</button>
+      <div class="result"></div>
+      <div class="act"><button class="link gen">生成工资单</button></div>
       <div class="err"></div>
-      <div class="out"><img alt="工资单"><p>长按图片保存或直接转发给员工</p></div>
-    </div>`).join("");
+      <div class="out"><img alt="工资单"><p>长按图片保存或转发给员工</p></div>
+    </article>`).join("");
   list().forEach(e => refreshCard(e));
   renderSum();
 }
 const cardOf = e => $("list").querySelector(`[data-id="${e.id}"]`);
 function refreshCard(e){
   const c = cardOf(e); if(!c) return;
-  const r = calcPay(e), [rt, rd] = restText(e);
-  c.querySelector(".chips").innerHTML = e.dates.map(d=>`<span class="chip">${md(d)}<button data-del="${d}" aria-label="删除">×</button></span>`).join("");
-  c.querySelector(".count").textContent = e.dates.length ? `${REST[e.rest]} ${e.dates.length} 天` : "选好日期会自动加进来，可以加多天";
-  c.querySelector(".epay").innerHTML = r ? `
-    <div class="lab">实发工资</div>
-    <div class="big serif">${money(r.net)}</div>
-    <div class="line">底薪 ${money(RULE.base)} ＋ 提成 ${money(r.com)} － 社保 ${money(RULE.social)} · ${rt}</div>
-    <span class="badge">本月档位：${r.t.label} · ${pct(r.t.rate)}</span>`
-    : `<div class="empty">填上业绩，这里直接算出实发工资</div>`;
-  c.querySelector(".gen").textContent = `生成 ${e.name.trim()||"TA"} 的工资单图片`;
+  const r = calcPay(e);
+  c.querySelector(".cal .hd span").textContent = `点选${REST[e.rest]}的日期`;
+  c.querySelector(".cal .ft").textContent = e.dates.length
+    ? `${REST[e.rest]} ${e.dates.length} 天 · ${e.dates.map(md).join("、")}` : "还没有选日期";
+  c.querySelector(".result").innerHTML = r ? `
+    <div class="row"><span class="k">实发工资</span><span class="net"><small>¥</small>${plain(r.net)}</span></div>
+    <div class="bd">底薪 <span class="num">${plain(RULE.base)}</span> ＋ 提成 <span class="num">${plain(r.com)}</span> － 社保 <span class="num">${plain(RULE.social)}</span></div>
+    <div class="scale">${TIERS.map(t=>`<div class="${t===r.t?"on":""}"><b>${pct(t.rate)}</b>${t.short}</div>`).join("")}</div>`
+    : `<div class="row"><span class="k">实发工资</span><span class="wait">填上业绩即可算出</span></div>`;
   c.querySelector(".out").style.display = "none";
   c.querySelector(".err").textContent = "";
 }
@@ -275,15 +321,16 @@ function renderSum(){
   const all = list(), done = all.map(e=>[e,calcPay(e)]).filter(([,r])=>r);
   const total = done.reduce((n,[,r])=>n+r.net,0), perf = done.reduce((n,[,r])=>n+r.p,0);
   const miss = all.length - done.length;
-  const [y,m] = month.split("-");
-  $("sum").innerHTML = `
-    <div class="lab">${y} 年 ${+m} 月 · 全店实发工资合计</div>
-    <div class="big serif">${money(total)}</div>
-    ${done.length ? `<table class="stab">
-      ${done.map(([e,r])=>`<tr><td>${esc(e.name)||"未填姓名"}<small>业绩 ${money(r.p)} · ${pct(r.t.rate)}</small></td><td class="rate">${money(r.net)}</td></tr>`).join("")}
-      <tr class="tot"><td>共 ${done.length} 人<small>总业绩 ${money(perf)}</small></td><td>${money(total)}</td></tr>
-    </table>` : `<div class="empty">员工填上业绩后，这里自动加总</div>`}
-    ${miss ? `<div class="warn">还有 ${miss} 人没填业绩，暂未算进合计</div>` : ""}`;
+  $("sum").innerHTML = done.length ? `
+    <div class="ledger">${done.map(([e,r])=>`
+      <div class="li"><span class="who">${esc(e.name.trim())||"未填姓名"}<small>业绩 ${money(r.p)} · ${pct(r.t.rate)}</small></span><span class="dots"></span><span class="amt">${money(r.net)}</span></div>`).join("")}
+    </div>
+    <div class="grand">
+      <div class="row"><span class="k">实发合计</span><span class="v">${money(total)}</span></div>
+      <div class="meta">共 ${done.length} 人 · 总业绩 ${money(perf)}</div>
+      ${miss ? `<div class="warn">另有 ${miss} 人未填业绩，暂未计入</div>` : ""}
+    </div>`
+    : `<div class="empty">员工填上业绩后，这里自动加总</div>`;
   $("sumOut").style.display = "none"; $("sumErr").textContent = "";
 }
 
@@ -291,40 +338,37 @@ function renderSum(){
 $("list").addEventListener("input", ev => {
   const c = ev.target.closest(".emp"); if(!c) return; const e = find(c.dataset.id);
   if(ev.target.classList.contains("nm"))   e.name = ev.target.value;
-  if(ev.target.classList.contains("perf")) e.perf = ev.target.value;
+  if(ev.target.classList.contains("perf")){ const v = cleanPerf(ev.target.value); if(v!==ev.target.value) ev.target.value = v; e.perf = v; }
   save(); refreshCard(e); renderSum();
-});
-$("list").addEventListener("change", ev => {
-  if(!ev.target.classList.contains("rd")) return;
-  const c = ev.target.closest(".emp"), e = find(c.dataset.id), v = ev.target.value, [mn,mx] = monthRange();
-  ev.target.value = "";
-  if(!v || e.dates.includes(v)) return;
-  if(v<mn || v>mx){ refreshCard(e); c.querySelector(".err").textContent = "日期不在所选工资月份里"; return; }
-  e.dates.push(v); e.dates.sort(); save(); refreshCard(e);
 });
 $("list").addEventListener("click", ev => {
   const c = ev.target.closest(".emp"); if(!c) return; const e = find(c.dataset.id);
   const b = ev.target.closest("button"); if(!b) return;
   if(b.dataset.rest){
-    e.rest = b.dataset.rest; if(e.rest==="normal") e.dates = [];
-    c.querySelectorAll(".opts button").forEach(x => x.classList.toggle("on", x===b));
-    c.querySelector(".rdwrap").style.display = e.rest==="normal" ? "none" : "";
+    if(e.rest !== b.dataset.rest) e.dates = [];
+    e.rest = b.dataset.rest;
+    c.querySelectorAll(".rest button").forEach(x => x.classList.toggle("on", x===b));
+    c.querySelectorAll(".grid button.on").forEach(x => x.classList.remove("on"));
+    c.querySelector(".cal").style.display = e.rest==="normal" ? "none" : "";
     save(); refreshCard(e); renderSum();
-  } else if(b.dataset.del){
-    e.dates = e.dates.filter(d => d!==b.dataset.del); save(); refreshCard(e);
+  } else if(b.dataset.day){
+    const d = b.dataset.day, has = e.dates.includes(d);
+    e.dates = has ? e.dates.filter(x=>x!==d) : [...e.dates, d].sort();
+    b.classList.toggle("on", !has); save(); refreshCard(e);
   } else if(b.classList.contains("del")){
-    if(!confirm(`删除 ${e.name.trim()||"这位员工"}？`)) return;
+    if(!confirm(`移除 ${e.name.trim()||"这位员工"}？`)) return;
     db.months[month] = list().filter(x => x!==e); save(); renderList();
   } else if(b.classList.contains("gen")){
     make(e, c);
   }
 });
+$("list").addEventListener("focusin", ev => { if(ev.target.classList.contains("perf")){ const e = find(ev.target.closest(".emp").dataset.id); ev.target.value = e.perf; } });
+$("list").addEventListener("focusout", ev => { if(ev.target.classList.contains("perf")){ const e = find(ev.target.closest(".emp").dataset.id); ev.target.value = fmtPerf(e.perf); } });
 $("addEmp").onclick = () => {
   list().push(newEmp("")); save(); renderList();
   const cards = $("list").querySelectorAll(".emp"), last = cards[cards.length-1];
   last.scrollIntoView({behavior:"smooth", block:"center"}); last.querySelector(".nm").focus({preventScroll:true});
 };
-$("mon").addEventListener("input", () => { if(!$("mon").value) return; month = $("mon").value; save(); renderList(); });
 $("sumBtn").onclick = makeSum;
 
 /* ========= 画图公用 ========= */
@@ -426,10 +470,8 @@ function makeSum(){
 
 /* 初始化 */
 (function(){
-  const d=new Date(), p=n=>String(n).padStart(2,"0");
-  month = `${d.getFullYear()}-${p(d.getMonth()+1)}`;
-  $("mon").value = month;
-  renderList();
+  const d = new Date();
+  setMonth(`${d.getFullYear()}-${pad2(d.getMonth()+1)}`);
 })();
 </script>
 </body>
