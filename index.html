@@ -99,6 +99,17 @@
   .result .net small{font-size:.5em;color:var(--ink3);margin-right:4px;vertical-align:.35em}
   .result .bd{font-size:12.5px;color:var(--ink2);margin-top:10px;text-align:right;letter-spacing:.04em}
   .result .bd .num{font-size:14px}
+  .brk{margin-top:16px;border-top:1px solid var(--hair2)}
+  .brk .ln{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--hair2);font-size:13px;color:var(--ink2);letter-spacing:.12em}
+  .brk .ln b{font-size:16px;color:var(--ink)}
+  .brk .ln em{font-style:normal;font-size:11px;color:var(--ink3);letter-spacing:.04em;margin-left:6px}
+  .brk .ln.sub{border-bottom:0;padding:2px 0 2px 16px;font-size:12px;color:var(--ink3)}
+  .brk .ln.sub span{position:relative}
+  .brk .ln.sub span:before{content:"";position:absolute;left:-12px;top:50%;width:6px;height:1px;background:var(--gold)}
+  .brk .ln.sub b{font-size:13.5px;color:var(--ink2)}
+  .brk .ln.sub:last-of-type{padding-bottom:8px}
+  .brk .ln:has(+ .ln.sub){border-bottom:0}
+  .brk .minus{color:var(--red)}
   .result .wait{font-size:13px;color:var(--ink3);text-align:right;font-style:italic;font-family:var(--song)}
   .scale{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:20px}
   .scale div{text-align:center;font-size:10.5px;color:var(--ink3);letter-spacing:.02em}
@@ -152,6 +163,11 @@
   .kv span{color:var(--ink3);letter-spacing:.16em}
   .kv b{font-weight:400}
   .kv b.num{font-size:16px}
+  .kv.sub{border-top:0;padding:3px 0 3px 16px;font-size:12.5px}
+  .kv.sub span{position:relative}
+  .kv.sub span:before{content:"";position:absolute;left:-12px;top:50%;width:6px;height:1px;background:var(--gold)}
+  .kv.sub b.num{font-size:14px;color:var(--ink2)}
+  .kv.sub + .kv:not(.sub){margin-top:4px}
   .in p{font-size:12.5px;color:var(--ink2);line-height:1.8;margin:12px 0 0;padding:12px 14px;background:var(--paper);border-left:2px solid var(--gold)}
   footer{text-align:center;font-size:10.5px;color:var(--ink3);letter-spacing:.3em;margin-top:40px;padding-left:.3em}
   footer .num{display:block;font-size:12px;letter-spacing:.4em;color:var(--gold);margin-bottom:6px}
@@ -204,7 +220,13 @@
 
 <script>
 /* ========= 工资规则：改数字只改这里 ========= */
-const RULE = { name:"销售岗", base:5000, social:700 };
+const RULE = {
+  name:"销售岗", social:700,
+  /* 月底薪 = 下面四项加起来 */
+  parts:[ ["底薪",3500], ["交通补贴",500], ["全勤奖",500], ["生活补贴",500] ],
+  otShare:.3,                 // 提成里 30% 折算成加班费
+};
+RULE.base = RULE.parts.reduce((n,[,v])=>n+v, 0);
 /* 当月业绩 < upTo 时用这一档；整体按档位比例计算 */
 const TIERS = [
   { upTo:50000,    label:"5 万以下",       short:"5万以下", rate:.01 },
@@ -229,9 +251,12 @@ const fmtPerf = v => { if(v===""||v==null) return ""; const [a,b] = String(v).sp
 const pad2 = n => String(n).padStart(2,"0");
 
 $("basic").innerHTML = [
-  ["岗位", RULE.name, ""], ["月底薪", money(RULE.base), "num"], ["出勤", "做六休一（每月休 4 天）", ""],
+  ["岗位", RULE.name, ""], ["月底薪", money(RULE.base), "num"],
+  ...RULE.parts.map(([k,v]) => [k, money(v), "num", "sub"]),
+  ["出勤", "做六休一（每月休 4 天）", ""],
   ["社保", "每月扣 " + money(RULE.social), ""], ["提成", "按当月业绩阶梯计算", ""],
-].map(([k,v,c]) => `<div class="kv"><span>${k}</span><b class="${c}">${v}</b></div>`).join("");
+  ["加班费", `提成的 ${RULE.otShare*100}% 折算`, ""],
+].map(([k,v,c,sub]) => `<div class="kv${sub?" sub":""}"><span>${k}</span><b class="${c}">${v}</b></div>`).join("");
 $("tiers").innerHTML = TIERS.map(t => `<div class="kv"><span>${t.label}</span><b class="num">${pct(t.rate)}</b></div>`).join("");
 
 /* ========= 数据：按月份存在这台手机里 ========= */
@@ -257,7 +282,8 @@ const find = id => list().find(e => e.id===id);
 function calcPay(e){
   if(e.perf==="" || e.perf==null) return null;
   const p = Math.max(0, +e.perf||0), t = tierOf(p), com = p*t.rate;
-  return { p, t, com, net: RULE.base + com - RULE.social };
+  const ot = com*RULE.otShare;
+  return { p, t, com, ot, comm: com-ot, net: RULE.base + com - RULE.social };
 }
 function restText(e){
   if(e.rest==="normal") return ["做六休一（休 4 天）", ""];
@@ -368,7 +394,13 @@ function refreshCard(e){
     ? `${REST[e.rest]} ${e.dates.length} 天 · ${e.dates.map(md).join("、")}` : "还没有选日期";
   c.querySelector(".result").innerHTML = r ? `
     <div class="row"><span class="k">实发工资</span><span class="net"><small>¥</small>${plain(r.net)}</span></div>
-    <div class="bd">底薪 <span class="num">${plain(RULE.base)}</span> ＋ 提成 <span class="num">${plain(r.com)}</span> － 社保 <span class="num">${plain(RULE.social)}</span></div>
+    <div class="brk">
+      <div class="ln"><span>月底薪</span><b class="num">${plain(RULE.base)}</b></div>
+      ${RULE.parts.map(([k,v])=>`<div class="ln sub"><span>${k}</span><b class="num">${plain(v)}</b></div>`).join("")}
+      <div class="ln"><span>提成</span><b class="num">＋${plain(r.comm)}</b></div>
+      <div class="ln"><span>加班费 <em>提成 ${RULE.otShare*100}% 折算</em></span><b class="num">＋${plain(r.ot)}</b></div>
+      <div class="ln"><span>社保</span><b class="num minus">－${plain(RULE.social)}</b></div>
+    </div>
     <div class="scale">${TIERS.map(t=>`<div class="${t===r.t?"on":""}"><b>${pct(t.rate)}</b>${t.short}</div>`).join("")}</div>`
     : `<div class="row"><span class="k">实发工资</span><span class="wait">填上业绩即可算出</span></div>`;
   c.querySelector(".out").style.display = "none";
@@ -462,14 +494,23 @@ function make(e, card){
   const [rt, rd] = restText(e);
   const lines = [
     ["姓名", name, ""], ["岗位", RULE.name, ""], ["当月业绩", money(r.p), ""],
-    ["月底薪", money(RULE.base), ""], ["提成", `＋${money(r.com)}（${pct(r.t.rate)}）`, ""],
+    ["月底薪", money(RULE.base), ""],
+    ...RULE.parts.map(([k,v]) => [k, money(v), "", true]),
+    ["提成", `＋${money(r.comm)}`, ""],
+    ["加班费", `＋${money(r.ot)}`, `按提成 ${RULE.otShare*100}% 折算`],
     ["社保", "－" + money(RULE.social), ""], ["出勤", rt, rd],
   ];
-  const W=1080, PAD=96, linesH = lines.reduce((n,l)=>n+(l[2]?118:76),0);
+  const W=1080, PAD=96, linesH = lines.reduce((n,l)=>n+(l[3]?54:l[2]?118:76),0);
   const [c,x] = sheet(W, 400 + linesH + 40 + TIERS.length*64 + 40 + 190 + 260, "工 资 单");
 
   let y=400;
-  for(const [k,v,sub] of lines){
+  for(const [k,v,sub,ind] of lines){
+    if(ind){                                   // 月底薪下面的明细，缩进小一号
+      y-=18; x.fillStyle=AC; x.fillRect(PAD+14,y-10,14,2);
+      x.fillStyle=INK3; x.font=F(400,28); x.fillText(k,PAD+44,y);
+      x.fillStyle=INK2; x.font=F(400,30); x.textAlign="right"; x.fillText(v,W-PAD,y); x.textAlign="left";
+      y+=72; continue;
+    }
     x.fillStyle=INK3; x.font=F(400,32); x.fillText(k,PAD,y);
     x.fillStyle=INK;  x.font=F(600,34); x.textAlign="right"; x.fillText(v,W-PAD,y);
     if(sub){ x.fillStyle=INK2; x.font=F(400,28); x.fillText(sub,W-PAD,y+44); }
